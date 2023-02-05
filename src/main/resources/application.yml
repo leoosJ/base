@@ -2,7 +2,7 @@ server:
   port : 8080
 
 spring:
-  #���ݿ�
+  #数据库
   datasource:
     name : project
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -10,7 +10,7 @@ spring:
     username : root
     password: password
 
-  #ѭ������
+  #循环依赖
   main:
     allow-circular-references: true
 
@@ -22,16 +22,16 @@ spring:
 mybatis:
   mapper-locations: classpath*:mapper/*/*.xml
   configuration:
-    # �����շ�����ת��
+    # 开启驼峰命名转换
     map-underscore-to-camel-case: true
-    # ����mybatis��־���sql
+    # 配置mybatis日志输出sql
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
-# �ļ��洢·��
+# 文件存储路径
 files:
   upload:
     path: D:/project/base/src/main/resources/files/
   download:
-    url: http://localhost:8081/file/download/
+    url: http://localhost:8080/file/download/
 
 
