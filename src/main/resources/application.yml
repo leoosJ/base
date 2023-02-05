@@ -1,0 +1,37 @@
+server:
+  port : 8080
+
+spring:
+  #���ݿ�
+  datasource:
+    name : project
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url : jdbc:mysql://127.0.0.1:3306/base?characterEncoding=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
+    username : root
+    password: password
+
+  #ѭ������
+  main:
+    allow-circular-references: true
+
+  #swagger
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+mybatis:
+  mapper-locations: classpath*:mapper/*/*.xml
+  configuration:
+    # �����շ�����ת��
+    map-underscore-to-camel-case: true
+    # ����mybatis��־���sql
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# �ļ��洢·��
+files:
+  upload:
+    path: D:/project/base/src/main/resources/files/
+  download:
+    url: http://localhost:8081/file/download/
+
+
