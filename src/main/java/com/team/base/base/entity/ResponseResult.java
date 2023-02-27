@@ -16,8 +16,8 @@ public class ResponseResult<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Integer status = GlobalConstant.SUCCESS_CODE;
-    private String message = GlobalConstant.SUCCESS_MESSAGE;
+    private Integer code = GlobalConstant.SUCCESS_CODE;
+    private String msg = GlobalConstant.SUCCESS_MSG;
     private T data;
 
 }

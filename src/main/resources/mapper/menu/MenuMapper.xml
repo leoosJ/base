@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.team.base.module.mapper.sys.menu.MenuMapper">
+
+    <sql id="menuColumns">
+        a.ID AS "id",
+        a.MENU_NAME AS "menuName",
+        a.PARENT_ID AS "parentId",
+        a.MENU_TYPE AS "menuType",
+        a.PERMISSION_CODE AS "permissionCode",
+        a.ICON AS "icon",
+        a.ROUTER AS "router",
+        a.SORT AS "sort",
+        a.SHOW_FLAG AS "showFlag",
+        a.CREATE_DATE AS "createDate",
+        a.UPDATE_ID AS "updateId",
+        a.UPDATE_DATE AS "updateDate",
+        a.DEL_FLAG AS "delFlag"
+    </sql>
+
+    <select id="get" resultType="com.team.base.module.entity.sys.menu.Menu">
+        SELECT
+        <include refid="menuColumns"/>
+        FROM sys_menu a
+        WHERE a.ID = #{id}
+    </select>
+
+    <select id="findList" resultType="com.team.base.module.entity.sys.menu.Menu">
+        SELECT
+        <include refid="menuColumns"/>
+        FROM sys_menu a
+        <where>
+            a.DEL_FLAG = '0'
+            <if test="menuName != null and menuName != ''">
+                AND a.MENU_NAME LIKE CONCAT('%', #{menuName}, '%')
+            </if>
+        </where>
+        ORDER BY a.SORT
+    </select>
+
+    <resultMap id="menuTreeResultMap" type="com.team.base.module.entity.sys.menu.Menu">
+        <id column="id" property="id"/>
+        <result column="menuName" property="menuName"/>
+        <result column="parentId" property="parentId"/>
+        <result column="menuType" property="menuType"/>
+        <result column="permissionCode" property="permissionCode"/>
+        <result column="icon" property="icon"/>
+        <result column="router" property="router"/>
+        <result column="sort" property="sort"/>
+        <result column="showFlag" property="showFlag"/>
+        <collection property="children" column="parentId=id" select="findChildrenById"/>
+    </resultMap>
+
+    <select id="findMenuTree" resultMap="menuTreeResultMap">
+        SELECT
+        a.ID AS "id",
+        a.MENU_NAME AS "menuName",
+        a.PARENT_ID AS "parentId",
+        a.MENU_TYPE AS "menuType",
+        a.PERMISSION_CODE AS "permissionCode",
+        a.ICON AS "icon",
+        a.ROUTER AS "router",
+        a.SORT AS "sort",
+        a.SHOW_FLAG AS "showFlag"
+        FROM sys_menu a
+        WHERE
+            a.DEL_FLAG = '0'
+            AND a.MENU_TYPE = '0'
+        ORDER BY a.SORT, a.UPDATE_DATE
+    </select>
+
+    <select id="findChildrenById" resultMap="menuTreeResultMap">
+        SELECT
+        a.ID AS "id",
+        a.MENU_NAME AS "menuName",
+        a.PARENT_ID AS "parentId",
+        a.MENU_TYPE AS "menuType",
+        a.PERMISSION_CODE AS "permissionCode",
+        a.ICON AS "icon",
+        a.ROUTER AS "router",
+        a.SORT AS "sort",
+        a.SHOW_FLAG AS "showFlag"
+        FROM sys_menu a
+        WHERE
+            a.DEL_FLAG = '0'
+            AND a.PARENT_ID = #{parentId}
+        ORDER BY a.SORT
+    </select>
+
+    <insert id="insert">
+        INSERT INTO sys_menu
+        (
+        ID,
+        MENU_NAME,
+        PARENT_ID,
+        MENU_TYPE,
+        PERMISSION_CODE,
+        ICON,
+        ROUTER,
+        SORT,
+        SHOW_FLAG,
+        CREATE_ID,
+        CREATE_DATE,
+        UPDATE_ID,
+        UPDATE_DATE,
+        DEL_FLAG
+        )
+        VALUES
+        (
+        #{id},
+        #{menuName},
+        #{parentId},
+        #{menuType},
+        #{permissionCode},
+        #{icon},
+        #{router},
+        #{sort},
+        #{showFlag},
+        #{createId},
+        #{createDate},
+        #{updateId},
+        #{updateDate},
+        #{delFlag}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE sys_menu
+        <set>
+            <if test="id != null and id != ''">
+                ID = #{id},
+            </if>
+            <if test="menuName != null and menuName != ''">
+                MENU_NAME = #{menuName},
+            </if>
+            <if test="parentId != null and parentId != ''">
+                PARENT_ID = #{parentId},
+            </if>
+            <if test="menuType != null and menuType != ''">
+                MENU_TYPE = #{menuType},
+            </if>
+            <if test="permissionCode != null and permissionCode != ''">
+                PERMISSION_CODE = #{permissionCode},
+            </if>
+            <if test="icon != null and icon != ''">
+                ICON = #{icon},
+            </if>
+            <if test="router != null and router != ''">
+                ROUTER = #{router},
+            </if>
+            <if test="sort != null and sort != ''">
+                SORT = #{sort},
+            </if>
+            <if test="showFlag != null and showFlag != ''">
+                SHOW_FLAG = #{showFlag},
+            </if>
+            <if test="createId != null and createId != ''">
+                CREATE_ID = #{createId},
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE = #{createDate},
+            </if>
+            <if test="updateId != null and updateId != ''">
+                UPDATE_ID = #{updateId},
+            </if>
+            <if test="updateDate != null">
+                UPDATE_DATE = #{updateDate},
+            </if>
+            <if test="delFlag != null and delFlag != ''">
+                DEL_FLAG = #{delFlag}
+            </if>
+        </set>
+        WHERE ID = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM sys_menu
+        WHERE ID = #{id}
+    </delete>
+
+    <update id="deleteByLogic">
+        UPDATE sys_menu
+        SET DEL_FLAG = '1'
+        WHERE ID = #{id}
+    </update>
+
+</mapper>

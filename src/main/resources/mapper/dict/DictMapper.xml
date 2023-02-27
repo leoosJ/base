@@ -2,13 +2,46 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.team.base.module.dict.mapper.DictMapper">
+<mapper namespace="com.team.base.module.mapper.sys.dict.DictMapper">
 
     <sql id="dictColumns">
+        a.ID AS "id",
         a.DICT_TYPE AS "dictType",
         a.DICT_VALUE AS "dictValue",
-        a.DICT_LABEL AS "dictLabel"
+        a.DICT_LABEL AS "dictLabel",
+        a.DICT_DESC AS "dictDesc",
+        a.CREATE_ID AS "createId",
+        a.CREATE_DATE AS "createDate",
+        a.UPDATE_ID AS "updateId",
+        a.UPDATE_DATE AS "updateDate",
+        a.DEL_FLAG AS "delFlag"
     </sql>
+
+    <select id="get" resultType="com.team.base.module.entity.sys.dict.Dict">
+        SELECT
+        <include refid="dictColumns"/>
+        FROM sys_dict a
+        WHERE a.ID = #{id}
+    </select>
+
+    <select id="findList" resultType="com.team.base.module.entity.sys.dict.Dict">
+        SELECT
+        <include refid="dictColumns"/>
+        FROM sys_dict a
+        <where>
+            a.DEL_FLAG = '0'
+            <if test="dictType != null and dictType != ''">
+                AND a.DICT_TYPE = #{dictType}
+            </if>
+            <if test="dictValue != null and dictValue != ''">
+                AND a.DICT_VALUE = #{dictValue}
+            </if>
+            <if test="dictLabel != null and dictLabel != ''">
+                AND a.DICT_LABEL LIKE CONCAT('%', #{dictLabel}, '%')
+            </if>
+        </where>
+        ORDER BY a.CREATE_DATE DESC
+    </select>
 
     <select id="getLabelByTypeAndValue" resultType="java.lang.String">
         SELECT
@@ -17,5 +50,96 @@
         WHERE a.DICT_TYPE = #{dictType}
         AND a.DICT_VALUE = #{dictValue}
     </select>
+
+    <select id="whetherDictExist" resultType="java.lang.Integer">
+        SELECT
+        COUNT(0)
+        FROM sys_dict a
+        <where>
+            a.DEL_FLAG = '0'
+            AND a.DICT_TYPE = #{dictType}
+            AND a.DICT_VALUE = #{dictValue}
+            <if test="id != null and id != ''">
+                AND a.ID != #{id}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert">
+        INSERT INTO sys_dict
+        (
+        ID,
+        DICT_TYPE,
+        DICT_VALUE,
+        DICT_LABEL,
+        DICT_DESC,
+        CREATE_ID,
+        CREATE_DATE,
+        UPDATE_ID,
+        UPDATE_DATE,
+        DEL_FLAG
+        )
+        VALUES
+        (
+        #{id},
+        #{dictType},
+        #{dictValue},
+        #{dictLabel},
+        #{dictDesc},
+        #{createId},
+        #{createDate},
+        #{updateId},
+        #{updateDate},
+        #{delFlag}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE sys_dict
+        <set>
+            <if test="id != null and id != ''">
+                ID = #{id},
+            </if>
+            <if test="dictType != null and dictType != ''">
+                DICT_TYPE = #{dictType},
+            </if>
+            <if test="dictValue != null and dictValue != ''">
+                DICT_VALUE = #{dictValue},
+            </if>
+            <if test="dictLabel != null and dictLabel != ''">
+                DICT_LABEL = #{dictLabel},
+            </if>
+            <if test="dictDesc != null and dictDesc != ''">
+                DICT_DESC = #{dictDesc},
+            </if>
+            <if test="createId != null and createId != ''">
+                CREATE_ID = #{createId},
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE = #{createDate},
+            </if>
+            <if test="updateId != null and updateId != ''">
+                UPDATE_ID = #{updateId},
+            </if>
+            <if test="updateDate != null">
+                UPDATE_DATE = #{updateDate},
+            </if>
+            <if test="delFlag != null and delFlag != ''">
+                DEL_FLAG = #{delFlag}
+            </if>
+        </set>
+        WHERE ID = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM sys_dict
+        WHERE ID = #{id}
+    </delete>
+
+    <update id="deleteByLogic">
+        UPDATE sys_dict
+        SET DEL_FLAG = '1'
+        WHERE ID = #{id}
+    </update>
 
 </mapper>

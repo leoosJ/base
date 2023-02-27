@@ -1,5 +1,6 @@
 package com.team.base.base.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,7 +22,9 @@ public abstract class BaseEntity implements Serializable {
     public static final String DEL_FLAG_DELETE = "1";
 
     protected String id;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     protected Date createDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     protected Date updateDate;
     protected String createId;
     protected String updateId;

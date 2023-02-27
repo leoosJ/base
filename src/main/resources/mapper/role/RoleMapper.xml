@@ -2,61 +2,57 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.team.base.module.mapper.sys.files.FilesMapper">
+<mapper namespace="com.team.base.module.mapper.sys.role.RoleMapper">
 
-    <sql id="fileColumns">
+    <sql id="roleColumns">
         a.ID AS "id",
-        a.NAME AS "name",
-        a.TYPE AS "type",
-        a.SIZE AS "size",
-        a.URL AS "url",
-        a.MD5 AS "md5",
+        a.ROLE_NAME AS "roleName",
+        a.ROLE_CODE AS "roleCode",
+        a.ROLE_DESC AS "roleDesc",
         a.CREATE_ID AS "createId",
         a.CREATE_DATE AS "createDate",
-        a.UPDATE_ID AS "uppdateId",
+        a.UPDATE_ID AS "updateId",
         a.UPDATE_DATE AS "updateDate",
         a.DEL_FLAG AS "delFlag"
     </sql>
 
-    <select id="get" resultType="com.team.base.module.entity.sys.files.Files">
+    <select id="get" resultType="com.team.base.module.entity.sys.role.Role">
         SELECT
-        <include refid="fileColumns"/>
-        FROM sys_file a
+        <include refid="roleColumns"/>
+        FROM sys_role a
         WHERE a.ID = #{id}
     </select>
 
-    <select id="getFileByMd5" resultType="com.team.base.module.entity.sys.files.Files">
+    <select id="findList" resultType="com.team.base.module.entity.sys.role.Role">
         SELECT
-        <include refid="fileColumns"/>
-        FROM sys_file a
-        WHERE a.MD5 = #{md5}
-        AND a.DEL_FLAG = '0'
-    </select>
-
-    <select id="findList" resultType="com.team.base.module.entity.sys.files.Files">
-        SELECT
-        <include refid="fileColumns"/>
-        FROM sys_file a
+        <include refid="roleColumns"/>
+        FROM sys_role a
         <where>
             a.DEL_FLAG = '0'
-            <if test="id != null and id != ''">
-                AND a.ID = #{id}
+            <if test="roleName != null and roleName != ''">
+                AND a.ROLE_NAME LIKE CONCAT('%', #{roleName}, '%')
             </if>
-            <if test="md5 != null and md5 != ''">
-                AND a.MD5 = #{md5}
+            <if test="roleCode != null and roleCode != ''">
+                AND a.ROLE_CODE LIKE CONCAT('%', #{roleCode}, '%')
             </if>
         </where>
+        ORDER BY a.CREATE_DATE DESC
+    </select>
+
+    <select id="getRoleSelectList" resultType="com.team.base.module.entity.sys.role.RoleSelect">
+        SELECT
+            a.ID AS "value",
+            a.ROLE_NAME AS "label"
+        FROM sys_role a
     </select>
 
     <insert id="insert">
-        INSERT INTO sys_file
+        INSERT INTO sys_role
         (
         ID,
-        NAME,
-        TYPE,
-        SIZE,
-        URL,
-        MD5,
+        ROLE_NAME,
+        ROLE_CODE,
+        ROLE_DESC,
         CREATE_ID,
         CREATE_DATE,
         UPDATE_ID,
@@ -66,11 +62,9 @@
         VALUES
         (
         #{id},
-        #{name},
-        #{type},
-        #{size},
-        #{url},
-        #{md5},
+        #{roleName},
+        #{roleCode},
+        #{roleDesc},
         #{createId},
         #{createDate},
         #{updateId},
@@ -80,25 +74,19 @@
     </insert>
 
     <update id="update">
-        UPDATE sys_file
+        UPDATE sys_role
         <set>
             <if test="id != null and id != ''">
                 ID = #{id},
             </if>
-            <if test="name != null and name != ''">
-                NAME = #{name},
+            <if test="roleName != null and roleName != ''">
+                ROLE_NAME = #{roleName},
             </if>
-            <if test="type != null and type != ''">
-                TYPE = #{type},
+            <if test="roleCode != null and roleCode != ''">
+                ROLE_CODE = #{roleCode},
             </if>
-            <if test="size != null">
-                SIZE = #{size},
-            </if>
-            <if test="url != null and url != ''">
-                URL = #{url},
-            </if>
-            <if test="md5 != null and md5 != ''">
-                MD5 = #{md5},
+            <if test="roleDesc != null and roleDesc != ''">
+                ROLE_DESC = #{roleDesc},
             </if>
             <if test="createId != null and createId != ''">
                 CREATE_ID = #{createId},
@@ -116,16 +104,16 @@
                 DEL_FLAG = #{delFlag}
             </if>
         </set>
-       WHERE ID = #{id}
+        WHERE ID = #{id}
     </update>
 
     <delete id="delete">
-        DELETE FROM sys_file
+        DELETE FROM sys_role
         WHERE ID = #{id}
     </delete>
 
     <update id="deleteByLogic">
-        UPDATE sys_file
+        UPDATE sys_role
         SET DEL_FLAG = '1'
         WHERE ID = #{id}
     </update>

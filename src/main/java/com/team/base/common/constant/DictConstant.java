@@ -9,12 +9,17 @@ package com.team.base.common.constant;
 public class DictConstant {
 
     /**
-     * 用户类型
+     * 是否
      */
-    public static final String USER_TYPE = "user_type";
+    public static final String WHETHER = "whether";
 
     /**
      * 性别
      */
     public static final String SEX = "sex";
+
+    /**
+     * 菜单所属类型
+     */
+    public static final String MENU_TYPE = "menu_type";
 }

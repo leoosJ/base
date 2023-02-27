@@ -3,8 +3,8 @@ package com.team.base.common.utils;
 import cn.hutool.extra.spring.SpringUtil;
 import com.auth0.jwt.JWT;
 import com.team.base.common.constant.GlobalConstant;
-import com.team.base.module.user.entity.User;
-import com.team.base.module.user.service.UserService;
+import com.team.base.module.entity.sys.user.User;
+import com.team.base.module.service.sys.user.UserService;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 

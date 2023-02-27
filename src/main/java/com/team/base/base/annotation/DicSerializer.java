@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
-import com.team.base.module.dict.service.DictService;
+import com.team.base.module.service.sys.dict.DictService;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;

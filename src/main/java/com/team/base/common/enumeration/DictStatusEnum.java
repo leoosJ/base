@@ -6,15 +6,14 @@ package com.team.base.common.enumeration;
  * @author JLP
  * @date 2022-12-19
  */
-public enum UserStatusEnum {
+public enum DictStatusEnum {
 
-    C1000("用户名已存在", 1000),
-    C1001("用户名不存在", 1001);
+    C1000("字典已存在", 1000);
 
     private String message;
     private Integer status;
 
-    UserStatusEnum(String message, Integer status) {
+    DictStatusEnum(String message, Integer status) {
         this.message = message;
         this.status = status;
     }

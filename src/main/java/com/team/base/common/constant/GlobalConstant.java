@@ -27,7 +27,7 @@ public class GlobalConstant {
      * 共同返回状态码、消息
      */
     public static final Integer SUCCESS_CODE = 200;
-    public static final String SUCCESS_MESSAGE = "成功";
+    public static final String SUCCESS_MSG = "成功";
 
     /**
      * 500状态码、信息提示

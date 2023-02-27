@@ -1,8 +1,8 @@
 package com.team.base.common.utils;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.team.base.module.files.entity.Files;
-import com.team.base.module.files.service.FilesService;
+import com.team.base.module.entity.sys.files.Files;
+import com.team.base.module.service.sys.files.FilesService;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;

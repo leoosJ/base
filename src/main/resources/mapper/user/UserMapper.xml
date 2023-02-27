@@ -2,20 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.team.base.module.user.mapper.UserMapper">
+<mapper namespace="com.team.base.module.mapper.sys.user.UserMapper">
 
     <sql id="userColumns">
         a.ID AS "id",
+        a.REAL_NAME AS "realName",
         a.USER_NAME AS "userName",
-        a.ACCOUNT AS "account",
         a.PASSWORD AS "password",
         a.SEX AS "sex",
         a.MOBILE AS "mobile",
-        a.ID_CARD AS "idCard",
         a.EMAIL AS "email",
         a.USER_PHOTO AS "userPhoto",
-        a.ADDRESS AS "address",
-        a.USER_TYPE AS "userType",
         a.CREATE_ID AS "createId",
         a.CREATE_DATE AS "createDate",
         a.UPDATE_ID AS "updateId",
@@ -23,25 +20,37 @@
         a.DEL_FLAG AS "delFlag"
     </sql>
 
-    <select id="get" resultType="com.team.base.module.user.entity.User">
+    <select id="get" resultType="com.team.base.module.entity.sys.user.User">
         SELECT
         <include refid="userColumns"/>
-        FROM user a
+        ,sru.ROLE_ID AS "roleId"
+        ,sr.ROLE_NAME AS "roleName"
+        FROM sys_user a
+        LEFT JOIN sys_role_user sru ON a.ID = sru.USER_ID
+        LEFT JOIN sys_role sr ON sru.ROLE_ID = sr.ID
         WHERE a.ID = #{id}
     </select>
 
-    <select id="findUserByAccount" resultType="com.team.base.module.user.entity.User">
+    <select id="findUserByUserName" resultType="com.team.base.module.entity.sys.user.User">
         SELECT
         <include refid="userColumns"/>
-        FROM user a
-        WHERE a.ACCOUNT = #{account}
+        ,sru.ROLE_ID AS "roleId"
+        ,sr.ROLE_NAME AS "roleName"
+        FROM sys_user a
+        LEFT JOIN sys_role_user sru ON a.ID = sru.USER_ID
+        LEFT JOIN sys_role sr ON sru.ROLE_ID = sr.ID
+        WHERE a.USER_NAME = #{userName}
         AND a.DEL_FLAG = '0'
     </select>
 
-    <select id="findList" resultType="com.team.base.module.user.entity.User">
+    <select id="findList" resultType="com.team.base.module.entity.sys.user.User">
         SELECT
         <include refid="userColumns"/>
-        FROM user a
+        ,sru.ROLE_ID AS "roleId"
+        ,sr.ROLE_NAME AS "roleName"
+        FROM sys_user a
+        LEFT JOIN sys_role_user sru ON a.ID = sru.USER_ID
+        LEFT JOIN sys_role sr ON sru.ROLE_ID = sr.ID
         <where>
             a.DEL_FLAG = '0'
             <if test="id != null and id != ''">
@@ -50,32 +59,57 @@
             <if test="userName != null and userName != ''">
                 AND a.USER_NAME LIKE CONCAT('%', #{userName}, '%')
             </if>
+            <if test="realName != null and realName != ''">
+                AND a.REAL_NAME LIKE CONCAT('%', #{realName}, '%')
+            </if>
             <if test="mobile != null and mobile != ''">
-                AND a.MOBILE = #{mobile}
+                AND a.MOBILE = LIKE CONCAT('%', #{mobile}, '%')
             </if>
             <if test="sex != null and sex != ''">
                 AND a.SEX = #{sex}
             </if>
-            <if test="idCard != null and idCard != ''">
-                AND a.ID_CARD LIKE CONCAT('%', #{idCard}, '%')
+        </where>
+        ORDER BY a.UPDATE_DATE DESC
+    </select>
+
+    <select id="whetherUserNameExist" resultType="java.lang.Integer">
+        SELECT
+        COUNT(0)
+        FROM sys_user a
+        <where>
+            a.DEL_FLAG = '0'
+            AND a.USER_NAME = #{userName}
+            <if test="id != null and id != ''">
+                AND a.ID != #{id}
             </if>
         </where>
     </select>
 
+    <select id="getUnAssignmentUserList" resultType="com.team.base.module.entity.sys.user.TransferUserResult">
+        SELECT
+        a.ID AS "key",
+        a.USER_NAME AS "label",
+        CASE
+            WHEN (SELECT COUNT(0) FROM sys_role_user WHERE USER_ID = a.ID AND ROLE_ID != #{roleId}) = 0 THEN '0'
+            ELSE '1'
+        END AS "disabled"
+        FROM sys_user a
+        WHERE
+            a.DEL_FLAG = '0'
+        ORDER BY a.UPDATE_DATE DESC
+    </select>
+
     <insert id="insert">
-        INSERT INTO user
+        INSERT INTO sys_user
         (
         ID,
+        REAL_NAME,
         USER_NAME,
-        ACCOUNT,
         PASSWORD,
         SEX,
         MOBILE,
-        ID_CARD,
         EMAIL,
         USER_PHOTO,
-        ADDRESS,
-        USER_TYPE,
         CREATE_ID,
         CREATE_DATE,
         UPDATE_ID,
@@ -85,16 +119,13 @@
         VALUES
         (
         #{id},
+        #{realName},
         #{userName},
-        #{account},
         #{password},
         #{sex},
         #{mobile},
-        #{idCard},
         #{email},
         #{userPhoto},
-        #{address},
-        #{userType},
         #{createId},
         #{createDate},
         #{updateId},
@@ -104,16 +135,16 @@
     </insert>
 
     <update id="update">
-        UPDATE user
+        UPDATE sys_user
         <set>
             <if test="id != null and id != ''">
                 ID = #{id},
             </if>
+            <if test="realName != null and realName != ''">
+                REAL_NAME = #{realName},
+            </if>
             <if test="userName != null and userName != ''">
                 USER_NAME = #{userName},
-            </if>
-            <if test="account != null and account != ''">
-                ACCOUNT = #{account},
             </if>
             <if test="password != null and password != ''">
                 PASSWORD = #{password},
@@ -124,20 +155,11 @@
             <if test="mobile != null and mobile != ''">
                 MOBILE = #{mobile},
             </if>
-            <if test="idCard != null and idCard != ''">
-                ID_CARD = #{idCard},
-            </if>
             <if test="email != null and email != ''">
                 EMAIL = #{email},
             </if>
             <if test="userPhoto != null and userPhoto != ''">
                 USER_PHOTO = #{userPhoto},
-            </if>
-            <if test="address != null and address != ''">
-                ADDRESS = #{address},
-            </if>
-            <if test="userType != null and userType != ''">
-                USER_TYPE = #{userType},
             </if>
             <if test="createId != null and createId != ''">
                 CREATE_ID = #{createId},
@@ -159,12 +181,12 @@
     </update>
 
     <delete id="delete">
-        DELETE FROM user
+        DELETE FROM sys_user
         WHERE ID = #{id}
     </delete>
 
     <update id="deleteByLogic">
-        UPDATE user
+        UPDATE sys_user
         SET DEL_FLAG = '1'
         WHERE ID = #{id}
     </update>
